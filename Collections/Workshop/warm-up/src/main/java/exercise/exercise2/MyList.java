@@ -175,6 +175,7 @@ public class MyList<Integer> extends ArrayList<Integer> {
     // TODO Exercise #2 d) Return the number of different elements that exist into the list
 
     public int getDifferentElements() {
+
         return differentElements;
     }
 }

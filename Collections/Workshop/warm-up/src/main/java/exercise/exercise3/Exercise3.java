@@ -32,7 +32,9 @@ public class Exercise3 {
 
     public void addElementsToSets(){
         HashSet<String> hashSet = new HashSet<String>();
+
         TreeSet<String> treeSet = new TreeSet<String>();
+
         LinkedHashSet<String> linkedHashSet = new LinkedHashSet<String>();
 
         System.out.println("The elements that will be added to the Sets: ");

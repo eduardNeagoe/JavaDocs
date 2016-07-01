@@ -93,6 +93,7 @@ public class Exercise1{
         // TODO Exercise #1 b2) Uncomment the following three lines in order to check your computed values using tests
         testValues.add(sum);
         testValues.add(min);
+
         testValues.add(max);
 
         return testValues;

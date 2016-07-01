@@ -12,7 +12,9 @@ import java.util.ListIterator;
  */
 public class Exercise0 {
 
-    public Exercise0(){}
+    public Exercise0(){
+
+    }
 
 
 

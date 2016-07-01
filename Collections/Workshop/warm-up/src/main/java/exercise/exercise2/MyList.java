@@ -165,6 +165,7 @@ public class MyList<Integer> extends ArrayList<Integer> {
         differentElements = 0;
     }
 
+
     // TODO Exercise #2 b) Override the remove methods so that the number of different elements is updated when
     // TODO Exercise #2 b) an element is removed
     // TODO Exercise #2 b) hint: you need to update the number of different elements only when

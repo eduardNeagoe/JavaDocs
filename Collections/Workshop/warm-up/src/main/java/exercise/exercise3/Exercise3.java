@@ -61,6 +61,7 @@ public class Exercise3 {
         linkedHashSet.toString();
         System.out.println("\nThe elements contained in the TreeSet after inserting two duplicates: ");
 
+
         // TODO Exercise #3 d) Add to the TreeSet two elements that already exist in the Set
         treeSet.add("that");
         treeSet.add("collection");

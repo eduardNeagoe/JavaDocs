@@ -83,6 +83,7 @@ public class Exercise1{
 
 
 
+
         }
 
         // TODO Exercise #1 b1) In order to pass the tests, you need to name your variables sum, min and max or if

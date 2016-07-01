@@ -1,4 +1,7 @@
 package exercise.exercise0;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by Radu.Hoaghe on 4/20/2015.
@@ -9,13 +12,33 @@ package exercise.exercise0;
  */
 public class Exercise0 {
 
-    public Exercise0(){
+    public Exercise0(){}
 
-    }
+
 
     public void iterateThroughList(){
 
         // TODO Exercise #0 a) Create a list (ArrayList or LinkedList) and add elements to it
+            List lista1 = new ArrayList<Integer>();
+            lista1.add(1);
+            lista1.add(7);
+            lista1.add(3);
+            for(int i = 0; i< lista1.size(); i++){
+                System.out.println(lista1.get(i));
+            }
+
+            ListIterator<Integer>  listIterator = (ListIterator<Integer>) lista1.listIterator();
+            while(listIterator.hasNext()){
+                System.out.println(listIterator.next());
+            }
+
+            for(Object i: lista1){
+                System.out.println(i);
+            }
+        }
+
+
+
         // TODO Exercise #0 a) Don't forget to specify the type of the list (Integer, String etc.)
 
         // TODO Exercise #0 b) Iterate through the list using ListIterator and print all its elements
@@ -24,9 +47,12 @@ public class Exercise0 {
 
         // TODO Exercise #0 d) Iterate through the list using foreach loop and print all its elements
 
-    }
+
 
     public static void main(String[] args) {
         // TODO Exercise #0 e) Create a new instance of Exercise0 class and call the iterateThroughList() method
+        Exercise0 ex0 = new Exercise0();
+        ex0.iterateThroughList();
+
     }
 }

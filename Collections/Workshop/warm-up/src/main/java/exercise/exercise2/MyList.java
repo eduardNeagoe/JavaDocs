@@ -177,5 +177,6 @@ public class MyList<Integer> extends ArrayList<Integer> {
     public int getDifferentElements() {
 
         return differentElements;
+
     }
 }

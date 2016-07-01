@@ -94,6 +94,7 @@ public class Exercise1{
         testValues.add(sum);
         testValues.add(min);
 
+
         testValues.add(max);
 
         return testValues;

@@ -16,7 +16,7 @@ public class Exercise0 {
 
 
     }
-    
+
 
 
 
@@ -27,6 +27,7 @@ public class Exercise0 {
             lista1.add(1);
             lista1.add(7);
             lista1.add(3);
+
             for(int i = 0; i< lista1.size(); i++){
                 System.out.println(lista1.get(i));
             }

@@ -33,6 +33,7 @@ public class Exercise1{
             int max = givenList.get(0);
             int min = givenList.get(0);
             int sum = 0;
+
             while(it.hasNext()){
                 int value = it.next();
                 sum+=value;

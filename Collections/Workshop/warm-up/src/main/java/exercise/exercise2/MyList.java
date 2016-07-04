@@ -55,7 +55,7 @@ public class MyList<Integer> extends ArrayList<Integer> {
         for(int i = 0 ; i < super.size(); i++){
             if(super.get(i) == integer ) {
                 flag = false;
-                break;
+                //break;
             }
 
         }

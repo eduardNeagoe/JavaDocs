@@ -1,38 +1,20 @@
 package ro.teamnet.zth.api.em;
 
-
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-
-/**
- * Created by Eduard on 07.07.2016.
- */
 public class QueryBuilder {
 
     private Object tableName;
     private List<ColumnInfo> queryColumns;
-    private List<Condition> conditions;
     private QueryType queryType;
+    private List<Condition> conditions;
 
+    /**
+     * Create QueryBuilder object
+     */
+    public QueryBuilder() {
 
-
-    private String getValueForQuery(Object value) {
-        if (value == null){
-            return null;
-        }
-        if (value instanceof String){
-            return "'" + value + "'";
-        } else if (value instanceof java.sql.Date){
-            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-            return "STR_TO_DATE('" + dateFormat.format((Date) value) + "', '%m/%d/%Y')";
-        } else {
-            return value.toString();
-        }
     }
 
     public QueryBuilder addCondition(Condition condition) {
@@ -43,10 +25,19 @@ public class QueryBuilder {
         return this;
     }
 
-    public QueryBuilder setTableName(Object tableName){
+    /**
+     * Set the table name for query
+     * @param tableName - table name
+     */
+    public QueryBuilder setTableName(Object tableName) {
         this.tableName = tableName;
         return this;
     }
+
+    /**
+     *
+     * @param queryColumns
+     */
     public QueryBuilder addQueryColumns(List<ColumnInfo> queryColumns) {
         if (this.queryColumns == null){
             this.queryColumns = new ArrayList<>();
@@ -56,12 +47,31 @@ public class QueryBuilder {
     }
 
 
-    public QueryBuilder setQueryType(QueryType queryType){
+    /**
+     *
+     * @param queryType
+     */
+    public QueryBuilder setQueryType(QueryType queryType) {
         this.queryType = queryType;
         return this;
     }
 
-
+    /**
+     * Create a SQL query
+     * @return - a valid SQL query
+     */
+    public String createQuery() {
+        if (QueryType.SELECT.equals(this.queryType)){
+            return createSelectQuery();
+        } else if (QueryType.INSERT.equals(this.queryType)) {
+            return createInsertQuery();
+        } else if (QueryType.UPDATE.equals(this.queryType)) {
+            return createUpdateQuery();
+        } else if (QueryType.DELETE.equals(this.queryType)) {
+            return createDeleteQuery();
+        }
+        return null;
+    }
 
     private String createSelectQuery() {
         StringBuilder sql = new StringBuilder();
@@ -80,12 +90,13 @@ public class QueryBuilder {
         if(conditions != null && !conditions.isEmpty()) {
             for(Condition condition : conditions) {
                 sql.append(whereAdded ? " and" : " where ").append(condition.getColumnName()).append("=")
-                        .append(getValueForQuery(condition.getValue()));
+                    .append(getValueForQuery(condition.getValue()));
                 whereAdded = true;
             }
         }
         return sql.toString();
     }
+
     private String createDeleteQuery() {
         StringBuilder sql = new StringBuilder();
         sql.append("delete from ").append(tableName);
@@ -150,19 +161,14 @@ public class QueryBuilder {
         return sql.toString();
     }
 
-    public String createQuery() {
-        if (QueryType.SELECT.equals(this.queryType)){
-            return createSelectQuery();
-        } else if (QueryType.INSERT.equals(this.queryType)) {
-            return createInsertQuery();
-        } else if (QueryType.UPDATE.equals(this.queryType)) {
-            return createUpdateQuery();
-        } else if (QueryType.DELETE.equals(this.queryType)) {
-            return createDeleteQuery();
+    private String getValueForQuery(Object value) {
+        if (value == null){
+            return null;
         }
-        return null;
+        if (value instanceof String){
+            return "'" + value + "'";
+        } else {
+            return value.toString();
+        }
     }
-
-
-
 }

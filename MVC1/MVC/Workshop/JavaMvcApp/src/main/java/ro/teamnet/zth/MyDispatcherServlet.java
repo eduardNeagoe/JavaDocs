@@ -1,9 +1,10 @@
 package ro.teamnet.zth;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import ro.teamnet.zth.appl.annotations.MyController;
 import ro.teamnet.zth.appl.annotations.MyRequestMethod;
+import ro.teamnet.zth.appl.annotations.MyRequestParam;
 import ro.teamnet.zth.appl.controller.DepartmentController;
-import ro.teamnet.zth.appl.controller.EmployeeController;
 import ro.teamnet.zth.fmk.AnnotationScanUtils;
 import ro.teamnet.zth.fmk.MethodAttributes;
 
@@ -13,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Parameter;
+import java.util.*;
 
 /**
  * Created by Eduard on 14.07.2016.
@@ -35,6 +36,11 @@ public class MyDispatcherServlet extends HttpServlet {
         //instructiuni de delegare
         dispatchReply("POST", req, resp);
 
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        dispatchReply("DELETE", req, resp);
     }
 
     protected void dispatchReply(String s, HttpServletRequest req, HttpServletResponse resp) {
@@ -84,6 +90,7 @@ public class MyDispatcherServlet extends HttpServlet {
                             methodAttributes.setControllerClass(controller.getName());
                             methodAttributes.setMethodType(myRequestMethod.methodType());
                             methodAttributes.setMethodName(controllerMethod.getName());
+                            methodAttributes.setParameterTypes(controllerMethod.getParameterTypes());
                             //Adaug, in sfarsit, in HashMap :)) :
                             allowedMethods.put(urlPath, methodAttributes);
                         }
@@ -109,9 +116,12 @@ public class MyDispatcherServlet extends HttpServlet {
             String result = departmentController.getAllDepartments();
             return result;
         }*/
+        //SAU!!! mai elegant, caut intr-un registru, care va fi definit in metoda init, la ridicarea aplicatiei(vezi init)
+
         String path = req.getPathInfo();
         MethodAttributes methodAttributes = allowedMethods.get(path);
 
+//        String parameterValues = req.getParameterValues();
         if(methodAttributes == null){
             //nu putem procesa url-ul
             return "Hello";
@@ -119,28 +129,38 @@ public class MyDispatcherServlet extends HttpServlet {
 
 
         String controllerName = methodAttributes.getControllerClass();
-        String methodName = methodAttributes.getMethodName();
+//        String methodName = methodAttributes.getMethodName();
         try {
             Class<?> controllerClass = Class.forName(controllerName);
             Object controllerInstance = controllerClass.newInstance();
-            Method method = controllerClass.getMethod(methodAttributes.getMethodName());
-            Object result = method.invoke(controllerInstance);//are ca parametru obiectul de care apartine metoda
+
+            Method method = controllerClass.getMethod(methodAttributes.getMethodName(), methodAttributes.getParameterTypes());
+            Parameter[] params = method.getParameters();
+            List<Object>  parameterValues = new ArrayList<>();
+            for (Parameter param : params) {
+                if(param.isAnnotationPresent(MyRequestParam.class)){
+                    MyRequestParam annotation = param.getAnnotation(MyRequestParam.class);
+                    String name = annotation.name();
+                    String requestParamValue = req.getParameter(name);
+                    Class<?> type = param.getType();
+                    Object requestParamObject = new ObjectMapper().readValue(requestParamValue, type);
+                    parameterValues.add(requestParamObject);
+                }
+            }
+//            String id = req.getParameter("id");
+            Object result = method.invoke(controllerInstance, parameterValues.toArray());//are ca parametru obiectul de care apartine metoda
             return result;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(controllerName.equals("DepartmentController")){
-            DepartmentController departmentController = new DepartmentController();
-        }
-
-
-        //SAU!!! mai elegant, caut intr-un registru, care va fi definit in metoda init, la ridicarea aplicatiei(vezi init)
 
         return "Hello";
     }
 
     private void reply(Object r, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.getWriter().printf(r.toString());//sau cu write(r.toString())
+        ObjectMapper objectMapper = new ObjectMapper();
+        String valueAsString = objectMapper.writeValueAsString(r);
+        resp.getWriter().printf(valueAsString);//sau cu write(r.toString())
     }
 
     private void sendExceptionError(Exception ex, HttpServletRequest req, HttpServletResponse resp) {

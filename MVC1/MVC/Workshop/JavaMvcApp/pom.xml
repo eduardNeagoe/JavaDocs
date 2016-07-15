@@ -25,7 +25,7 @@
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
             <version>${ojdbc6.version}</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
 
         <dependency>
@@ -48,6 +48,12 @@
             <version>${javax.servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -69,7 +75,9 @@
                     <url>http://192.168.99.100:49100/manager/text</url>
                     <username>admin</username>
                     <password>admin</password>
+                    <port>8091</port>
                     <path>/app</path>
+
                 </configuration>
             </plugin>
         </plugins>

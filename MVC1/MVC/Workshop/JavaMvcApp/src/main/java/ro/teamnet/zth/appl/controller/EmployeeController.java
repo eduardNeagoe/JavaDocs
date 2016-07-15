@@ -2,9 +2,12 @@ package ro.teamnet.zth.appl.controller;
 
 import ro.teamnet.zth.appl.annotations.MyController;
 import ro.teamnet.zth.appl.annotations.MyRequestMethod;
-import ro.teamnet.zth.appl.dao.EmployeeDao;
+import ro.teamnet.zth.appl.annotations.MyRequestParam;
 import ro.teamnet.zth.appl.domain.Employee;
+import ro.teamnet.zth.service.EmployeeService;
+import ro.teamnet.zth.service.EmployeeServiceImpl;
 
+import java.lang.annotation.ElementType;
 import java.util.List;
 
 /**
@@ -12,23 +15,20 @@ import java.util.List;
  */
 @MyController(urlPath = "/employees")
 public class EmployeeController {
-    private  EmployeeDao employeeDao = new EmployeeDao();
-
-//    protected List<String> getAllEmployees(){
-//        List<Employee> listEmployees = employeeDao.getAllEmployees();
-//        List<String> allEmployees;
-//        for(Employee emp:listEmployees){
-//            allEmployees.add(emp.getFirstName())
-//        }
-//
-//    }
+//    private  EmployeeDao employeeDao = new EmployeeDao();
+private EmployeeService employeeService  = new EmployeeServiceImpl();
     @MyRequestMethod(urlPath = "/all") //methodType = "GET" este default, deci redundant
-    public String getAllEmployees(){
-        return "allEmployees";
+    public List<Employee> getAllEmployees(){
+        return employeeService.getAllEmployees();
     }
 
     @MyRequestMethod(urlPath = "/one", methodType = "GET")
-    public String getOneEmployee(){
-        return "oneRandomEmployee";
+    public Employee getOneEmployee(@MyRequestParam(name = "id") Long employeeId){
+        return employeeService.findOneEmployee(employeeId);
+    }
+
+    @MyRequestMethod(urlPath = "/delete", methodType = "DELETE")
+    public void deleteOneEmployee(@MyRequestParam(name = "id") Long id){
+         employeeService.deleteEmployee(id);
     }
 }

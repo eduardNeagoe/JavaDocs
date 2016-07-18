@@ -3,8 +3,8 @@ package ro.teamnet.zth;
 import org.codehaus.jackson.map.ObjectMapper;
 import ro.teamnet.zth.appl.annotations.MyController;
 import ro.teamnet.zth.appl.annotations.MyRequestMethod;
+import ro.teamnet.zth.appl.annotations.MyRequestObject;
 import ro.teamnet.zth.appl.annotations.MyRequestParam;
-import ro.teamnet.zth.appl.controller.DepartmentController;
 import ro.teamnet.zth.fmk.AnnotationScanUtils;
 import ro.teamnet.zth.fmk.MethodAttributes;
 
@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -23,7 +24,7 @@ import java.util.*;
 public class MyDispatcherServlet extends HttpServlet {
     //necesar sa fie global pe clasa pentru a fi vazut peste tot
     //Acesta este registrul despre care am vorbit mai jos, in init():
-    Map<String, MethodAttributes> allowedMethods = new HashMap<String, MethodAttributes>();
+    Map<String, MethodAttributes> allowedMethods = new HashMap<>();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -35,7 +36,6 @@ public class MyDispatcherServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //instructiuni de delegare
         dispatchReply("POST", req, resp);
-
     }
 
     @Override
@@ -138,13 +138,22 @@ public class MyDispatcherServlet extends HttpServlet {
             Parameter[] params = method.getParameters();
             List<Object>  parameterValues = new ArrayList<>();
             for (Parameter param : params) {
+                Class<?> type = param.getType();
                 if(param.isAnnotationPresent(MyRequestParam.class)){
                     MyRequestParam annotation = param.getAnnotation(MyRequestParam.class);
                     String name = annotation.name();
                     String requestParamValue = req.getParameter(name);
-                    Class<?> type = param.getType();
-                    Object requestParamObject = new ObjectMapper().readValue(requestParamValue, type);
+
+                    Object requestParamObject= requestParamValue;
+                    if(!type.equals(String.class)){
+                        requestParamObject = new ObjectMapper().readValue(requestParamValue, type);
+                    }
+//                    Object requestParamObject = new ObjectMapper().readValue(requestParamValue, type);
                     parameterValues.add(requestParamObject);
+                }else if(param.isAnnotationPresent(MyRequestObject.class)){
+                    BufferedReader requestBodyReader = req.getReader();
+                    Object requestBodyObject = new ObjectMapper().readValue(requestBodyReader, type);
+                    parameterValues.add(requestBodyObject);
                 }
             }
 //            String id = req.getParameter("id");

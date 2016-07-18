@@ -6,8 +6,6 @@ import ro.teamnet.zth.appl.annotations.MyRequestParam;
 import ro.teamnet.zth.appl.domain.Employee;
 import ro.teamnet.zth.service.EmployeeService;
 import ro.teamnet.zth.service.EmployeeServiceImpl;
-
-import java.lang.annotation.ElementType;
 import java.util.List;
 
 /**
@@ -16,7 +14,9 @@ import java.util.List;
 @MyController(urlPath = "/employees")
 public class EmployeeController {
 //    private  EmployeeDao employeeDao = new EmployeeDao();
-private EmployeeService employeeService  = new EmployeeServiceImpl();
+private final EmployeeService employeeService  = new EmployeeServiceImpl();
+
+
     @MyRequestMethod(urlPath = "/all") //methodType = "GET" este default, deci redundant
     public List<Employee> getAllEmployees(){
         return employeeService.getAllEmployees();
@@ -30,5 +30,10 @@ private EmployeeService employeeService  = new EmployeeServiceImpl();
     @MyRequestMethod(urlPath = "/delete", methodType = "DELETE")
     public void deleteOneEmployee(@MyRequestParam(name = "id") Long id){
          employeeService.deleteEmployee(id);
+    }
+
+    @MyRequestMethod(urlPath = "/insert", methodType = "POST")
+    public Employee saveEmployee(Employee employee){
+        return employeeService.insertEmployee(employee);
     }
 }
